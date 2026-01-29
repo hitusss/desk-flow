@@ -31,9 +31,12 @@
     }
   },
   "devDependencies": {
+    "@repo/eslint": "workspace:*",
     "@repo/prettier": "workspace:*",
+    "@repo/typescript": "workspace:*",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
+    "eslint": "catalog:",
     "prettier": "catalog:",
     "turbo": "^2.8.0",
     "typescript": "catalog:"
