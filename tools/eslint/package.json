@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@repo/eslint",
-  "private": true,
   "type": "module",
+  "private": true,
   "exports": {
     ".": "./base.ts"
   },
@@ -20,10 +20,10 @@
     "jiti": "^2.6.1"
   },
   "devDependencies": {
-    "@repo/typescript": "workspace:*",
     "@repo/prettier": "workspace:*",
-    "typescript": "catalog:",
-    "prettier": "catalog:"
+    "@repo/typescript": "workspace:*",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
   },
   "prettier": "@repo/prettier"
 }

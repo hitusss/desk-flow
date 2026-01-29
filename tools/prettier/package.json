@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@repo/prettier",
-  "private": true,
   "type": "module",
+  "private": true,
   "exports": {
     ".": "./index.js"
   },
