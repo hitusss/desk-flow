@@ -29,7 +29,7 @@
     }
   },
   "devDependencies": {
-    "@repo/prettier": "workspace:",
+    "@repo/prettier": "workspace:*",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
     "prettier": "catalog:",

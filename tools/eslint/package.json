@@ -15,8 +15,8 @@
     "eslint-plugin-react-refresh": "^0.4.26"
   },
   "devDependencies": {
-    "@repo/typescript": "workspace:",
-    "@repo/prettier": "workspace:",
+    "@repo/typescript": "workspace:*",
+    "@repo/prettier": "workspace:*",
     "typescript": "catalog:",
     "prettier": "catalog:"
   },
