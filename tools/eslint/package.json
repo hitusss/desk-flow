@@ -6,6 +6,10 @@
   "exports": {
     ".": "./base.ts"
   },
+  "scripts": {
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "eslint": "catalog:",
     "@antfu/eslint-config": "^7.2.0",
