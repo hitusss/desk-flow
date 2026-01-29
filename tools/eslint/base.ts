@@ -1,6 +1,12 @@
 import antfu from "@antfu/eslint-config";
 
-export default function config({options, config}: {options: Parameters<typeof antfu>[0] , config: Parameters<typeof antfu>[1] }): any {
+export default function config({
+  options,
+  config,
+}: {
+  options?: Parameters<typeof antfu>[0];
+  config?: Parameters<typeof antfu>[1];
+}): any {
   return antfu(
     {
       type: "app",
