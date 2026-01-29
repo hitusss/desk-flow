@@ -29,10 +29,12 @@
     }
   },
   "devDependencies": {
+    "@repo/prettier": "workspace:",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
     "prettier": "catalog:",
     "turbo": "^2.8.0",
     "typescript": "catalog:"
-  }
+  },
+  "prettier": "@repo/prettier"
 }
