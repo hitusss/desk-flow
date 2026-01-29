@@ -18,14 +18,11 @@ coverage
 # Turbo
 .turbo
 
-# Vercel
-.vercel
-
 # Build Outputs
-.next/
 out/
 build
 dist
+.cache
 
 
 # Debug
