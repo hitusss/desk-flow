@@ -1,0 +1,12 @@
+{
+  "extends": ["@repo/typescript/base.json"],
+  "compilerOptions": {
+    "jsx": "react-native",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["~/src/*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "disc"]
+}
