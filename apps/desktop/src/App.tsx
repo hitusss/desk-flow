@@ -1,14 +1,13 @@
+import { invoke } from "@tauri-apps/api/core";
 import { useState } from "react";
 import {
-  View,
-  Text,
-  TextInput,
+  Image,
   Pressable,
   StyleSheet,
-  Image,
-  SafeAreaView,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
-import { invoke } from "@tauri-apps/api/core";
 import reactLogo from "./assets/react.svg";
 
 function App() {

@@ -23,14 +23,14 @@
     "@repo/eslint": "workspace:*",
     "@repo/prettier": "workspace:*",
     "@repo/typescript": "workspace:*",
+    "@tauri-apps/cli": "^2",
     "@types/react": "catalog:react",
     "@types/react-dom": "catalog:react",
     "@vitejs/plugin-react": "^4.6.0",
-    "vite": "^7.0.4",
-    "@tauri-apps/cli": "^2",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vite": "^7.0.4"
   },
   "prettier": "@repo/prettier"
 }
