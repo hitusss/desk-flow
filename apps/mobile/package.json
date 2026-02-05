@@ -44,12 +44,12 @@
     "@repo/prettier": "workspace:*",
     "@repo/tailwind": "workspace:*",
     "@repo/typescript": "workspace:*",
-    "@tailwindcss/postcss": "^4.1.18",
+    "@tailwindcss/postcss": "catalog:tailwind",
     "@types/react": "catalog:react",
     "eslint": "catalog:",
     "postcss": "^8.5.6",
     "prettier": "catalog:",
-    "tailwindcss": "^4.1.18",
+    "tailwindcss": "catalog:tailwind",
     "typescript": "catalog:"
   },
   "overrides": {

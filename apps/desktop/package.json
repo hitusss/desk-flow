@@ -12,12 +12,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.18",
+    "@tailwindcss/vite": "catalog:tailwind",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
     "react": "catalog:react",
     "react-dom": "catalog:react",
-    "tailwindcss": "^4.1.18"
+    "tailwindcss": "catalog:tailwind"
   },
   "devDependencies": {
     "@repo/eslint": "workspace:*",
