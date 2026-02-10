@@ -3,7 +3,9 @@
   "name": "@repo/config",
   "type": "module",
   "private": true,
-  "exports": {},
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint .",
