@@ -18,6 +18,37 @@ export default function config({
     },
     {
       rules: {
+        "perfectionist/sort-imports": [
+          "error",
+          {
+            groups: [
+              "type-import",
+              ["type-internal", "type-parent", "type-sibling", "type-index"],
+              { newlinesBetween: 1 },
+              "value-builtin",
+              "value-external",
+              { newlinesBetween: 1 },
+              "repo",
+              { newlinesBetween: 1 },
+              "value-internal",
+              ["value-parent", "value-sibling", "value-index"],
+              { newlinesBetween: 1 },
+              "side-effect",
+              "ts-equals-import",
+              "unknown",
+            ],
+            customGroups: [
+              {
+                groupName: "repo",
+                elementNamePattern: ["^@repo/.*"],
+              },
+            ],
+            newlinesBetween: 0,
+            newlinesInside: 0,
+            order: "asc",
+            type: "natural",
+          },
+        ],
         "unicorn/filename-case": [
           "error",
           {
