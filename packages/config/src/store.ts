@@ -1,5 +1,6 @@
 import type { StateStorage } from "zustand/middleware";
 import type { Config } from "./schema";
+
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
