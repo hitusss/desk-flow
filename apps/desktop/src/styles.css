@@ -2,3 +2,5 @@
 @import "tw-animate-css";
 
 @import "@repo/tailwind/theme";
+
+@source "../../../packages/ui/src/**/*.{ts,tsx}";

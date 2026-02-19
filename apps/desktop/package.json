@@ -22,6 +22,7 @@
     "tw-animate-css": "catalog:tailwind"
   },
   "devDependencies": {
+    "@repo/ui": "workspace:*",
     "@repo/eslint": "workspace:*",
     "@repo/prettier": "workspace:*",
     "@repo/tailwind": "workspace:*",
