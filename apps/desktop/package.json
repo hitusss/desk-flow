@@ -22,11 +22,11 @@
     "tw-animate-css": "catalog:tailwind"
   },
   "devDependencies": {
-    "@repo/ui": "workspace:*",
     "@repo/eslint": "workspace:*",
     "@repo/prettier": "workspace:*",
     "@repo/tailwind": "workspace:*",
     "@repo/typescript": "workspace:*",
+    "@repo/ui": "workspace:*",
     "@tauri-apps/cli": "^2",
     "@types/react": "catalog:react",
     "@types/react-dom": "catalog:react",
