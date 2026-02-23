@@ -4,7 +4,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "types": ["react-native-css/types"]
   },
   "include": ["src", "*.ts"],
   "exclude": ["node_modules"]
