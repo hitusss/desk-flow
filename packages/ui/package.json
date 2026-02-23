@@ -25,6 +25,7 @@
     "@repo/eslint": "workspace:*",
     "@repo/prettier": "workspace:*",
     "@repo/typescript": "workspace:*",
+    "@types/react": "catalog:react",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "react-native-css": "^3.0.3",
