@@ -16,8 +16,12 @@
     "@tailwindcss/vite": "catalog:tailwind",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
+    "class-variance-authority": "catalog:tailwind",
+    "clsx": "catalog:tailwind",
+    "lucide-react": "^0.575.0",
     "react": "catalog:react",
     "react-dom": "catalog:react",
+    "tailwind-merge": "catalog:tailwind",
     "tailwindcss": "catalog:tailwind",
     "tw-animate-css": "catalog:tailwind"
   },

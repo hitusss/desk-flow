@@ -22,6 +22,8 @@
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
     "@repo/config": "workspace:*",
+    "class-variance-authority": "catalog:tailwind",
+    "clsx": "catalog:tailwind",
     "expo": "~54.0.32",
     "expo-constants": "~18.0.13",
     "expo-linking": "~8.0.11",
@@ -30,6 +32,7 @@
     "expo-status-bar": "~3.0.9",
     "expo-system-ui": "~6.0.9",
     "expo-web-browser": "~15.0.10",
+    "lucide-react-native": "^0.575.0",
     "nativewind": "5.0.0-preview.2",
     "react": "catalog:react",
     "react-dom": "catalog:react",
@@ -40,7 +43,8 @@
     "react-native-safe-area-context": "^5.6.2",
     "react-native-screens": "~4.16.0",
     "react-native-web": "^0.21.2",
-    "react-native-worklets": "0.5.1"
+    "react-native-worklets": "0.5.1",
+    "tailwind-merge": "catalog:tailwind"
   },
   "devDependencies": {
     "@repo/eslint": "workspace:*",
