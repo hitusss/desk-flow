@@ -6,6 +6,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 interface ConfigState {
   config?: Config;
+  set: (config: Config) => void;
 }
 
 export function createConfigStore(storage: StateStorage) {
@@ -13,6 +14,7 @@ export function createConfigStore(storage: StateStorage) {
     persist(
       (set, get) => ({
         config: undefined,
+        set: (config) => set({ config }),
       }),
       {
         name: "user-config",
