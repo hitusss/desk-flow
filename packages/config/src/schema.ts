@@ -1,15 +1,15 @@
 import { z } from "zod";
 
-export const PositionSchema = z.object({
+export const RoutineSchema = z.object({
   name: z.string().min(1),
   duration: z.number().int().positive(),
 });
 
-export const PositionsSchema = z.array(PositionSchema).min(2);
+export const RoutinesSchema = z.array(RoutineSchema).min(2);
 
 export const ConfigSchema = z.object({
-  positions: PositionsSchema,
+  routines: RoutinesSchema,
 });
 
-export type Position = z.infer<typeof PositionSchema>;
+export type Routine = z.infer<typeof RoutineSchema>;
 export type Config = z.infer<typeof ConfigSchema>;
