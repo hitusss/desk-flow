@@ -22,6 +22,7 @@
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
     "@repo/config": "workspace:*",
+    "@rn-primitives/slot": "^1.2.0",
     "class-variance-authority": "catalog:tailwind",
     "clsx": "catalog:tailwind",
     "expo": "~54.0.32",
