@@ -14,7 +14,7 @@ const buttonVariants = cva(
         default:
           "bg-main border-2 border-border shadow-shadow active:shadow-none active:translate-x-boxShadowX active:translate-y-boxShadowY",
         noShadow: "bg-main border-2 border-border",
-        natual:
+        neutral:
           "bg-secondary border-2 border-border shadow-shadow active:shadow-none active:translate-x-boxShadowX active:translate-y-boxShadowY",
         reverse: `"bg-main border-2 border-border active:shadow-shadow active:translate-x-reverseBoxShadowX
         active:translate-y-reverseBoxShadowY"`,
@@ -38,7 +38,7 @@ const buttonTextVariants = cva("text-foreground text-sm font-medium", {
     variant: {
       default: "text-main-foreground",
       noShadow: "text-main-foreground",
-      natual: "text-foreground",
+      neutral: "text-foreground",
       reverse: "text-main-foreground",
     },
     size: {
