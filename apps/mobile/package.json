@@ -25,6 +25,7 @@
     "@rn-primitives/label": "^1.2.0",
     "@rn-primitives/separator": "^1.2.0",
     "@rn-primitives/slot": "^1.2.0",
+    "@tanstack/react-form": "^1.28.5",
     "class-variance-authority": "catalog:tailwind",
     "clsx": "catalog:tailwind",
     "expo": "~54.0.32",
