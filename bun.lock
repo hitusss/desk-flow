@@ -56,6 +56,7 @@
         "@react-navigation/elements": "^2.6.3",
         "@react-navigation/native": "^7.1.8",
         "@repo/config": "workspace:*",
+        "@repo/timer": "workspace:*",
         "@rn-primitives/label": "^1.2.0",
         "@rn-primitives/separator": "^1.2.0",
         "@rn-primitives/slot": "^1.2.0",
@@ -101,6 +102,22 @@
     "packages/config": {
       "name": "@repo/config",
       "dependencies": {
+        "zod": "catalog:",
+        "zustand": "catalog:",
+      },
+      "devDependencies": {
+        "@repo/eslint": "workspace:*",
+        "@repo/prettier": "workspace:*",
+        "@repo/typescript": "workspace:*",
+        "eslint": "catalog:",
+        "prettier": "catalog:",
+        "typescript": "catalog:",
+      },
+    },
+    "packages/timer": {
+      "name": "@repo/timer",
+      "dependencies": {
+        "@repo/config": "workspace:*",
         "zod": "catalog:",
         "zustand": "catalog:",
       },
@@ -689,6 +706,8 @@
     "@repo/prettier": ["@repo/prettier@workspace:tools/prettier"],
 
     "@repo/tailwind": ["@repo/tailwind@workspace:tools/tailwind"],
+
+    "@repo/timer": ["@repo/timer@workspace:packages/timer"],
 
     "@repo/typescript": ["@repo/typescript@workspace:tools/typescript"],
 
