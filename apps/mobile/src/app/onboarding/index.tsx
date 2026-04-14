@@ -3,7 +3,11 @@ import { ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react-native";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { ConfigSchema, DEFAULT_ROUTINES } from "@repo/config";
+import {
+  ConfigSchema,
+  createDefaultRoutines,
+  createRoutine,
+} from "@repo/config";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +27,8 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import { useConfigStore } from "@/lib/config";
+
+const DEFAULT_ROUTINES = createDefaultRoutines();
 
 export default function Route() {
   const setConfig = useConfigStore((store) => store.set);
@@ -62,9 +68,9 @@ export default function Route() {
             <form.Field name="routines" mode="array">
               {(routinesField) => (
                 <View className="gap-5">
-                  {routinesField.state.value.map((_, index) => (
+                  {routinesField.state.value.map((routine, index) => (
                     <View
-                      key={`routine-${index}`}
+                      key={`routine-${routine.id}`}
                       className="rounded-base border-border bg-secondary-background flex-row gap-2 border-2 p-4"
                     >
                       <View className="gap-4">
@@ -198,7 +204,7 @@ export default function Route() {
                     onPress={() => {
                       routinesField.insertValue(
                         routinesField.state.value.length,
-                        { name: "", duration: 0 },
+                        createRoutine(),
                       );
                     }}
                     accessibilityLabel="Add routine"
