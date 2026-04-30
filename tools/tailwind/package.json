@@ -4,18 +4,24 @@
   "type": "module",
   "private": true,
   "exports": {
-    "./theme": "./theme.css"
+    "./theme": "./theme.css",
+    "./theme-colors": "./theme.ts"
   },
   "scripts": {
+    "build": "bun run scripts/generate-theme.ts",
+    "dev": "bun run scripts/generate-theme.ts --watch",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {},
+  "dependencies": {
+    "culori": "^4.0.2"
+  },
   "devDependencies": {
     "@repo/eslint": "workspace:*",
     "@repo/prettier": "workspace:*",
     "@repo/typescript": "workspace:*",
+    "@types/culori": "^4.0.1",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
