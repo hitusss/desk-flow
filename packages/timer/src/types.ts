@@ -35,6 +35,9 @@ export interface TimerEventPayload extends TimerSnapshot {
 }
 
 export interface TimerState extends TimerSnapshot {
+  getFormatedTimer: () => string;
+  getProgress: () => number;
+  getStatusLabel: () => string;
   canStart: () => boolean;
   canReset: () => boolean;
   canPause: () => boolean;

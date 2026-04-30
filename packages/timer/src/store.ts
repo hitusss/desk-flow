@@ -225,6 +225,48 @@ export function createTimerStore(configStore: TimerConfigStore) {
 
     return {
       ...initialState,
+      getFormatedTimer: () => {
+        const { remainingSeconds } = get();
+
+        if (remainingSeconds === undefined) {
+          return "--:--";
+        }
+
+        const minutes = Math.floor(remainingSeconds / 60);
+        const seconds = remainingSeconds % 60;
+
+        return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+      },
+      getProgress: () => {
+        const { remainingSeconds, totalSeconds } = get();
+
+        if (
+          remainingSeconds === undefined ||
+          totalSeconds === undefined ||
+          totalSeconds === 0
+        ) {
+          return 0;
+        }
+
+        return Math.min(
+          Math.max((totalSeconds - remainingSeconds) / totalSeconds, 0),
+          1,
+        );
+      },
+      getStatusLabel: () => {
+        switch (get().status) {
+          case "idle":
+            return "Ready";
+          case "running":
+            return "Running";
+          case "paused":
+            return "Paused";
+          case "completed":
+            return "Completed";
+          default:
+            return "Unavailable";
+        }
+      },
       canStart: () => get().status === "idle",
       canReset: () => {
         const state = get();
