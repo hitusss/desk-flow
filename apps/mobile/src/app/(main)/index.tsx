@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { PatternBackground } from "@/components/pattern-background";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -118,102 +119,104 @@ export default function Route() {
   const PrimaryActionIcon = primaryAction.icon;
 
   return (
-    <SafeAreaView>
-      <View className="min-h-screen justify-center gap-4 px-4 py-8">
-        <Card>
-          <CardHeader>
-            <View className="flex-row items-start justify-between gap-3">
-              <View className="flex-1 gap-1">
-                <CardTitle>
-                  {currentRoutine?.name ?? "Timer unavailable"}
-                </CardTitle>
-                <CardDescription>
-                  {currentRoutineIndex !== undefined && routinesCount > 0
-                    ? `Routine ${currentRoutineIndex + 1} of ${routinesCount}`
-                    : "No routine available"}
-                </CardDescription>
-              </View>
+    <PatternBackground>
+      <SafeAreaView>
+        <View className="min-h-screen justify-center gap-4 px-4 py-8">
+          <Card>
+            <CardHeader>
+              <View className="flex-row items-start justify-between gap-3">
+                <View className="flex-1 gap-1">
+                  <CardTitle>
+                    {currentRoutine?.name ?? "Timer unavailable"}
+                  </CardTitle>
+                  <CardDescription>
+                    {currentRoutineIndex !== undefined && routinesCount > 0
+                      ? `Routine ${currentRoutineIndex + 1} of ${routinesCount}`
+                      : "No routine available"}
+                  </CardDescription>
+                </View>
 
-              <View className="rounded-base border-border bg-main border-2 px-3 py-2">
-                <Text className="text-main-foreground font-medium">
-                  {statusLabel}
+                <View className="rounded-base border-border bg-main border-2 px-3 py-2">
+                  <Text className="text-main-foreground font-medium">
+                    {statusLabel}
+                  </Text>
+                </View>
+              </View>
+            </CardHeader>
+
+            <CardContent className="gap-6">
+              <View className="items-center gap-2">
+                <Text className="font-heading text-6xl tracking-tight">
+                  {formattedTimer}
+                </Text>
+                <Text className="text-muted-foreground text-sm">
+                  {totalSeconds === undefined
+                    ? "Set up your routine to start tracking time."
+                    : `${progressPercent}% complete`}
                 </Text>
               </View>
-            </View>
-          </CardHeader>
 
-          <CardContent className="gap-6">
-            <View className="items-center gap-2">
-              <Text className="font-heading text-6xl tracking-tight">
-                {formattedTimer}
-              </Text>
-              <Text className="text-muted-foreground text-sm">
-                {totalSeconds === undefined
-                  ? "Set up your routine to start tracking time."
-                  : `${progressPercent}% complete`}
-              </Text>
-            </View>
-
-            <View className="rounded-base border-border bg-secondary-background h-4 overflow-hidden border-2">
-              <View
-                className="bg-main h-full"
-                style={{ width: `${progress * 100}%` }}
-              />
-            </View>
-
-            <Separator />
-
-            <View className="gap-3">
-              <View className="flex-row gap-3">
-                <Button
-                  variant="neutral"
-                  size="icon"
-                  onPress={previous}
-                  disabled={!canPrevious}
-                  accessibilityLabel="Previous routine"
-                  accessibilityHint="Moves to the previous routine"
-                >
-                  <SkipBack size={18} />
-                </Button>
-
-                <Button
-                  className="flex-1"
-                  size="lg"
-                  onPress={primaryAction.onPress}
-                  disabled={primaryAction.disabled}
-                  accessibilityLabel={primaryAction.label}
-                  accessibilityHint={`${primaryAction.label}s the current timer`}
-                >
-                  <PrimaryActionIcon size={18} />
-                  <Text>{primaryAction.label}</Text>
-                </Button>
-
-                <Button
-                  variant="neutral"
-                  size="icon"
-                  onPress={next}
-                  disabled={!canNext}
-                  accessibilityLabel="Next routine"
-                  accessibilityHint="Moves to the next routine"
-                >
-                  <SkipForward size={18} />
-                </Button>
+              <View className="rounded-base border-border bg-secondary-background h-4 overflow-hidden border-2">
+                <View
+                  className="bg-main h-full"
+                  style={{ width: `${progress * 100}%` }}
+                />
               </View>
 
-              <Button
-                variant="neutral"
-                onPress={reset}
-                disabled={!canReset}
-                accessibilityLabel="Reset timer"
-                accessibilityHint="Resets the timer back to the start of the current routine"
-              >
-                <RotateCcw size={16} />
-                <Text>Reset timer</Text>
-              </Button>
-            </View>
-          </CardContent>
-        </Card>
-      </View>
-    </SafeAreaView>
+              <Separator />
+
+              <View className="gap-3">
+                <View className="flex-row gap-3">
+                  <Button
+                    variant="neutral"
+                    size="icon"
+                    onPress={previous}
+                    disabled={!canPrevious}
+                    accessibilityLabel="Previous routine"
+                    accessibilityHint="Moves to the previous routine"
+                  >
+                    <SkipBack size={18} />
+                  </Button>
+
+                  <Button
+                    className="flex-1"
+                    size="lg"
+                    onPress={primaryAction.onPress}
+                    disabled={primaryAction.disabled}
+                    accessibilityLabel={primaryAction.label}
+                    accessibilityHint={`${primaryAction.label}s the current timer`}
+                  >
+                    <PrimaryActionIcon size={18} />
+                    <Text>{primaryAction.label}</Text>
+                  </Button>
+
+                  <Button
+                    variant="neutral"
+                    size="icon"
+                    onPress={next}
+                    disabled={!canNext}
+                    accessibilityLabel="Next routine"
+                    accessibilityHint="Moves to the next routine"
+                  >
+                    <SkipForward size={18} />
+                  </Button>
+                </View>
+
+                <Button
+                  variant="neutral"
+                  onPress={reset}
+                  disabled={!canReset}
+                  accessibilityLabel="Reset timer"
+                  accessibilityHint="Resets the timer back to the start of the current routine"
+                >
+                  <RotateCcw size={16} />
+                  <Text>Reset timer</Text>
+                </Button>
+              </View>
+            </CardContent>
+          </Card>
+        </View>
+      </SafeAreaView>
+    </PatternBackground>
   );
 }
