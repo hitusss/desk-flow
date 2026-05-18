@@ -4,6 +4,7 @@ import type {
   TimerEventPayload,
   TimerEventReason,
   TimerListener,
+  TimerReconcileResult,
   TimerSnapshot,
   TimerState,
   TimerStatus,
@@ -12,18 +13,17 @@ import type {
 import { create } from "zustand";
 
 import { ConfigSchema } from "@repo/config";
-import type { Config } from "@repo/config";
+import type { Config, Routine } from "@repo/config";
 
 type TimerStateUpdate = Partial<TimerSnapshot>;
 
 const EVENT_NAMES: TimerEventName[] = [
-  "onComplete",
-  "onNew",
-  "onTick",
-  "onStart",
-  "onReset",
-  "onPause",
-  "onResume",
+  "onRoutineComplete",
+  "onRoutineChange",
+  "onTimerStart",
+  "onTimerReset",
+  "onTimerPause",
+  "onTimerResume",
 ];
 
 const UNINITIALIZED_SNAPSHOT: TimerSnapshot = {
@@ -33,6 +33,9 @@ const UNINITIALIZED_SNAPSHOT: TimerSnapshot = {
   currentRoutine: undefined,
   remainingSeconds: undefined,
   totalSeconds: undefined,
+  currentRoutineStartedAtMs: undefined,
+  currentRoutineEndsAtMs: undefined,
+  completedAtMs: undefined,
 };
 
 function toSeconds(minutes: number) {
@@ -47,6 +50,9 @@ function getSnapshot(state: TimerState): TimerSnapshot {
     currentRoutine: state.currentRoutine,
     remainingSeconds: state.remainingSeconds,
     totalSeconds: state.totalSeconds,
+    currentRoutineStartedAtMs: state.currentRoutineStartedAtMs,
+    currentRoutineEndsAtMs: state.currentRoutineEndsAtMs,
+    completedAtMs: state.completedAtMs,
   };
 }
 
@@ -60,6 +66,24 @@ function getRoutineAtIndex(config: Config, index: number) {
   return routine;
 }
 
+function getIdleSnapshot(
+  routine: Routine,
+  currentRoutineIndex: number,
+  totalSeconds = toSeconds(routine.duration),
+): TimerSnapshot {
+  return {
+    status: "idle",
+    currentRoutineId: routine.id,
+    currentRoutineIndex,
+    currentRoutine: routine,
+    remainingSeconds: totalSeconds,
+    totalSeconds,
+    currentRoutineStartedAtMs: undefined,
+    currentRoutineEndsAtMs: undefined,
+    completedAtMs: undefined,
+  };
+}
+
 function getInitializedSnapshot(
   config: Config,
   routineId = config.routines[0]?.id,
@@ -69,16 +93,8 @@ function getInitializedSnapshot(
   );
   const currentRoutineIndex = routineIndex === -1 ? 0 : routineIndex;
   const currentRoutine = getRoutineAtIndex(config, currentRoutineIndex);
-  const totalSeconds = toSeconds(currentRoutine.duration);
 
-  return {
-    status: "idle",
-    currentRoutineId: currentRoutine.id,
-    currentRoutineIndex,
-    currentRoutine,
-    remainingSeconds: totalSeconds,
-    totalSeconds,
-  };
+  return getIdleSnapshot(currentRoutine, currentRoutineIndex);
 }
 
 function toEventPayload(
@@ -93,14 +109,6 @@ function toEventPayload(
 
 function throwInvalidAction(action: string, status: TimerStatus) {
   throw new Error(`Cannot ${action} timer when status is "${status}".`);
-}
-
-function assertPositiveInteger(seconds: number) {
-  if (Number.isInteger(seconds) && seconds > 0) {
-    return;
-  }
-
-  throw new Error("Tick seconds must be a positive integer.");
 }
 
 function emitListeners(
@@ -138,8 +146,77 @@ function isSameSnapshot(a: TimerSnapshot, b: TimerSnapshot) {
     a.currentRoutineIndex === b.currentRoutineIndex &&
     a.currentRoutine === b.currentRoutine &&
     a.remainingSeconds === b.remainingSeconds &&
-    a.totalSeconds === b.totalSeconds
+    a.totalSeconds === b.totalSeconds &&
+    a.currentRoutineStartedAtMs === b.currentRoutineStartedAtMs &&
+    a.currentRoutineEndsAtMs === b.currentRoutineEndsAtMs &&
+    a.completedAtMs === b.completedAtMs
   );
+}
+
+function getRemainingSeconds(endsAtMs: number, now: number) {
+  return Math.max(Math.ceil((endsAtMs - now) / 1000), 0);
+}
+
+function getRunningSnapshot(
+  state: Pick<
+    TimerSnapshot,
+    | "currentRoutineId"
+    | "currentRoutineIndex"
+    | "currentRoutine"
+    | "remainingSeconds"
+    | "totalSeconds"
+  >,
+  now: number,
+): TimerSnapshot {
+  const remainingSeconds = state.remainingSeconds;
+
+  if (
+    state.currentRoutineId === undefined ||
+    state.currentRoutineIndex === undefined ||
+    state.currentRoutine === undefined ||
+    remainingSeconds === undefined ||
+    state.totalSeconds === undefined
+  ) {
+    return UNINITIALIZED_SNAPSHOT;
+  }
+
+  return {
+    status: "running",
+    currentRoutineId: state.currentRoutineId,
+    currentRoutineIndex: state.currentRoutineIndex,
+    currentRoutine: state.currentRoutine,
+    remainingSeconds,
+    totalSeconds: state.totalSeconds,
+    currentRoutineStartedAtMs: now,
+    currentRoutineEndsAtMs: now + remainingSeconds * 1000,
+    completedAtMs: undefined,
+  };
+}
+
+function getReconciledRunningSnapshot(
+  state: TimerSnapshot,
+  now: number,
+): TimerSnapshot {
+  if (state.currentRoutineEndsAtMs === undefined) {
+    return state;
+  }
+
+  const remainingSeconds = getRemainingSeconds(state.currentRoutineEndsAtMs, now);
+
+  if (remainingSeconds === 0) {
+    return {
+      ...state,
+      status: "completed",
+      remainingSeconds: 0,
+      currentRoutineEndsAtMs: undefined,
+      completedAtMs: now,
+    };
+  }
+
+  return {
+    ...state,
+    remainingSeconds,
+  };
 }
 
 export function createTimerStore(configStore: TimerConfigStore) {
@@ -170,6 +247,40 @@ export function createTimerStore(configStore: TimerConfigStore) {
       return getSnapshot(get());
     };
 
+    const reconcile = (now = Date.now()): TimerReconcileResult => {
+      const state = getSnapshot(get());
+
+      if (state.status !== "running") {
+        return {
+          didUpdate: false,
+          didCompleteRoutine: false,
+          snapshot: state,
+        };
+      }
+
+      const nextSnapshot = getReconciledRunningSnapshot(state, now);
+      if (isSameSnapshot(nextSnapshot, state)) {
+        return {
+          didUpdate: false,
+          didCompleteRoutine: false,
+          snapshot: state,
+        };
+      }
+
+      setSnapshot(nextSnapshot);
+      const didCompleteRoutine = nextSnapshot.status === "completed";
+
+      if (didCompleteRoutine) {
+        emit("onRoutineComplete", nextSnapshot, "complete");
+      }
+
+      return {
+        didUpdate: true,
+        didCompleteRoutine,
+        snapshot: nextSnapshot,
+      };
+    };
+
     const setRoutine = (
       reason: Extract<TimerEventReason, "next" | "previous">,
       offset: -1 | 1,
@@ -189,18 +300,11 @@ export function createTimerStore(configStore: TimerConfigStore) {
         state.currentRoutineIndex,
         offset,
       );
-      const totalSeconds = toSeconds(target.currentRoutine.duration);
+      const snapshot = setSnapshot(
+        getIdleSnapshot(target.currentRoutine, target.currentRoutineIndex),
+      );
 
-      const snapshot = setSnapshot({
-        status: "idle",
-        currentRoutineId: target.currentRoutine.id,
-        currentRoutineIndex: target.currentRoutineIndex,
-        currentRoutine: target.currentRoutine,
-        remainingSeconds: totalSeconds,
-        totalSeconds,
-      });
-
-      emit("onNew", snapshot, reason);
+      emit("onRoutineChange", snapshot, reason);
       return snapshot;
     };
 
@@ -215,9 +319,9 @@ export function createTimerStore(configStore: TimerConfigStore) {
       const previousRoutineId = get().currentRoutineId;
       const snapshot = setSnapshot(getInitializedSnapshot(configResult.data));
 
-      emit("onReset", snapshot, reason);
+      emit("onTimerReset", snapshot, reason);
       if (previousRoutineId !== snapshot.currentRoutineId) {
-        emit("onNew", snapshot, reason);
+        emit("onRoutineChange", snapshot, reason);
       }
 
       return snapshot;
@@ -286,15 +390,16 @@ export function createTimerStore(configStore: TimerConfigStore) {
       canResume: () => get().status === "paused",
       canNext: () => get().status !== "uninitialized",
       canPrevious: () => get().status !== "uninitialized",
-      canTick: () => get().status === "running",
       start: () => {
         const state = get();
         if (!get().canStart()) {
           throwInvalidAction("start", state.status);
         }
 
-        const snapshot = setSnapshot({ status: "running" });
-        emit("onStart", snapshot, "start");
+        const snapshot = setSnapshot(
+          getRunningSnapshot(getSnapshot(get()), Date.now()),
+        );
+        emit("onTimerStart", snapshot, "start");
       },
       reset: () => {
         const state = get();
@@ -321,8 +426,16 @@ export function createTimerStore(configStore: TimerConfigStore) {
           throwInvalidAction("pause", state.status);
         }
 
-        const snapshot = setSnapshot({ status: "paused" });
-        emit("onPause", snapshot, "pause");
+        const { snapshot } = reconcile(Date.now());
+        if (snapshot.status === "completed") {
+          throwInvalidAction("pause", snapshot.status);
+        }
+
+        const pausedSnapshot = setSnapshot({
+          status: "paused",
+          currentRoutineEndsAtMs: undefined,
+        });
+        emit("onTimerPause", pausedSnapshot, "pause");
       },
       resume: () => {
         const state = get();
@@ -330,8 +443,10 @@ export function createTimerStore(configStore: TimerConfigStore) {
           throwInvalidAction("resume", state.status);
         }
 
-        const snapshot = setSnapshot({ status: "running" });
-        emit("onResume", snapshot, "resume");
+        const snapshot = setSnapshot(
+          getRunningSnapshot(getSnapshot(get()), Date.now()),
+        );
+        emit("onTimerResume", snapshot, "resume");
       },
       next: () => {
         setRoutine("next", 1);
@@ -339,29 +454,9 @@ export function createTimerStore(configStore: TimerConfigStore) {
       previous: () => {
         setRoutine("previous", -1);
       },
-      tick: (seconds = 1) => {
-        const state = get();
-        if (!get().canTick()) {
-          throwInvalidAction("tick", state.status);
-        }
-        assertPositiveInteger(seconds);
-
-        const remainingSeconds = Math.max(
-          (state.remainingSeconds ?? 0) - seconds,
-          0,
-        );
-        const snapshot = setSnapshot({
-          status: remainingSeconds === 0 ? "completed" : "running",
-          remainingSeconds,
-        });
-
-        emit("onTick", snapshot, "tick");
-        if (remainingSeconds === 0) {
-          emit("onComplete", snapshot, "tick");
-        }
-      },
-      onComplete: (listener) => {
-        const eventListeners = listeners.get("onComplete");
+      reconcile,
+      onRoutineComplete: (listener) => {
+        const eventListeners = listeners.get("onRoutineComplete");
 
         eventListeners?.add(listener);
 
@@ -369,8 +464,8 @@ export function createTimerStore(configStore: TimerConfigStore) {
           eventListeners?.delete(listener);
         };
       },
-      onNew: (listener) => {
-        const eventListeners = listeners.get("onNew");
+      onRoutineChange: (listener) => {
+        const eventListeners = listeners.get("onRoutineChange");
 
         eventListeners?.add(listener);
 
@@ -378,8 +473,8 @@ export function createTimerStore(configStore: TimerConfigStore) {
           eventListeners?.delete(listener);
         };
       },
-      onTick: (listener) => {
-        const eventListeners = listeners.get("onTick");
+      onTimerStart: (listener) => {
+        const eventListeners = listeners.get("onTimerStart");
 
         eventListeners?.add(listener);
 
@@ -387,8 +482,8 @@ export function createTimerStore(configStore: TimerConfigStore) {
           eventListeners?.delete(listener);
         };
       },
-      onStart: (listener) => {
-        const eventListeners = listeners.get("onStart");
+      onTimerReset: (listener) => {
+        const eventListeners = listeners.get("onTimerReset");
 
         eventListeners?.add(listener);
 
@@ -396,8 +491,8 @@ export function createTimerStore(configStore: TimerConfigStore) {
           eventListeners?.delete(listener);
         };
       },
-      onReset: (listener) => {
-        const eventListeners = listeners.get("onReset");
+      onTimerPause: (listener) => {
+        const eventListeners = listeners.get("onTimerPause");
 
         eventListeners?.add(listener);
 
@@ -405,17 +500,8 @@ export function createTimerStore(configStore: TimerConfigStore) {
           eventListeners?.delete(listener);
         };
       },
-      onPause: (listener) => {
-        const eventListeners = listeners.get("onPause");
-
-        eventListeners?.add(listener);
-
-        return () => {
-          eventListeners?.delete(listener);
-        };
-      },
-      onResume: (listener) => {
-        const eventListeners = listeners.get("onResume");
+      onTimerResume: (listener) => {
+        const eventListeners = listeners.get("onTimerResume");
 
         eventListeners?.add(listener);
 
@@ -448,7 +534,7 @@ export function createTimerStore(configStore: TimerConfigStore) {
     if (state.status === "uninitialized") {
       const snapshot = getInitializedSnapshot(config);
       useTimerStore.setState(snapshot);
-      emit("onNew", snapshot, "init");
+      emit("onRoutineChange", snapshot, "init");
       return;
     }
 
@@ -461,9 +547,9 @@ export function createTimerStore(configStore: TimerConfigStore) {
       const previousRoutineId = state.currentRoutineId;
 
       useTimerStore.setState(nextSnapshot);
-      emit("onReset", nextSnapshot, "config-delete");
+      emit("onTimerReset", nextSnapshot, "config-delete");
       if (previousRoutineId !== nextSnapshot.currentRoutineId) {
-        emit("onNew", nextSnapshot, "config-delete");
+        emit("onRoutineChange", nextSnapshot, "config-delete");
       }
       return;
     }
@@ -478,34 +564,67 @@ export function createTimerStore(configStore: TimerConfigStore) {
       return;
     }
 
-    const elapsedSeconds = Math.max(
-      (state.totalSeconds ?? totalSeconds) -
-        (state.remainingSeconds ?? totalSeconds),
-      0,
-    );
-    let nextStatus = state.status;
-    let remainingSeconds = state.remainingSeconds ?? totalSeconds;
+    let nextSnapshot: TimerSnapshot;
+    if (state.status === "running") {
+      const reconciledSnapshot = getReconciledRunningSnapshot(getSnapshot(state), Date.now());
+      const elapsedSeconds = Math.max(
+        (reconciledSnapshot.totalSeconds ?? totalSeconds) -
+          (reconciledSnapshot.remainingSeconds ?? totalSeconds),
+        0,
+      );
+      const remainingSeconds = Math.max(totalSeconds - elapsedSeconds, 0);
 
-    if (state.status === "idle") {
-      remainingSeconds = totalSeconds;
+      nextSnapshot =
+        remainingSeconds === 0
+          ? {
+              ...reconciledSnapshot,
+              status: "completed",
+              currentRoutineId: currentRoutine.id,
+              currentRoutineIndex,
+              currentRoutine,
+              remainingSeconds: 0,
+              totalSeconds,
+              currentRoutineEndsAtMs: undefined,
+              completedAtMs: Date.now(),
+            }
+          : {
+              ...reconciledSnapshot,
+              status: "running",
+              currentRoutineId: currentRoutine.id,
+              currentRoutineIndex,
+              currentRoutine,
+              remainingSeconds,
+              totalSeconds,
+              currentRoutineEndsAtMs: Date.now() + remainingSeconds * 1000,
+              completedAtMs: undefined,
+            };
+    } else if (state.status === "paused") {
+      const elapsedSeconds = Math.max(
+        (state.totalSeconds ?? totalSeconds) - (state.remainingSeconds ?? totalSeconds),
+        0,
+      );
+      const remainingSeconds = Math.max(totalSeconds - elapsedSeconds, 0);
+
+      nextSnapshot = {
+        ...getSnapshot(state),
+        currentRoutineId: currentRoutine.id,
+        currentRoutineIndex,
+        currentRoutine,
+        remainingSeconds,
+        totalSeconds,
+      };
     } else if (state.status === "completed") {
-      nextStatus = "idle";
-      remainingSeconds = totalSeconds;
+      nextSnapshot = {
+        ...getSnapshot(state),
+        currentRoutineId: currentRoutine.id,
+        currentRoutineIndex,
+        currentRoutine,
+        remainingSeconds: 0,
+        totalSeconds,
+      };
     } else {
-      remainingSeconds = Math.max(totalSeconds - elapsedSeconds, 0);
-      if (remainingSeconds === 0) {
-        nextStatus = "completed";
-      }
+      nextSnapshot = getIdleSnapshot(currentRoutine, currentRoutineIndex, totalSeconds);
     }
-
-    const nextSnapshot: TimerSnapshot = {
-      status: nextStatus,
-      currentRoutineId: currentRoutine.id,
-      currentRoutineIndex,
-      currentRoutine,
-      remainingSeconds,
-      totalSeconds,
-    };
 
     if (isSameSnapshot(nextSnapshot, getSnapshot(state))) {
       return;
@@ -513,8 +632,11 @@ export function createTimerStore(configStore: TimerConfigStore) {
 
     useTimerStore.setState(nextSnapshot);
 
-    if (nextStatus === "completed" && state.status !== "completed") {
-      emit("onComplete", nextSnapshot, "config-update");
+    if (hasIndexChanged) {
+      emit("onRoutineChange", nextSnapshot, "config-update");
+    }
+    if (nextSnapshot.status === "completed" && state.status !== "completed") {
+      emit("onRoutineComplete", nextSnapshot, "config-update");
     }
   };
 

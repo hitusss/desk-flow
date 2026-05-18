@@ -1,5 +1,3 @@
-import type { StoreApi, UseBoundStore } from "zustand";
-
 import type { Config, Routine } from "@repo/config";
 
 export type TimerStatus =
@@ -12,7 +10,7 @@ export type TimerStatus =
 export type TimerEventReason =
   | "init"
   | "start"
-  | "tick"
+  | "complete"
   | "pause"
   | "resume"
   | "next"
@@ -28,10 +26,19 @@ export interface TimerSnapshot {
   currentRoutine: Routine | undefined;
   remainingSeconds: number | undefined;
   totalSeconds: number | undefined;
+  currentRoutineStartedAtMs: number | undefined;
+  currentRoutineEndsAtMs: number | undefined;
+  completedAtMs: number | undefined;
 }
 
 export interface TimerEventPayload extends TimerSnapshot {
   reason: TimerEventReason;
+}
+
+export interface TimerReconcileResult {
+  didUpdate: boolean;
+  didCompleteRoutine: boolean;
+  snapshot: TimerSnapshot;
 }
 
 export interface TimerState extends TimerSnapshot {
@@ -44,21 +51,19 @@ export interface TimerState extends TimerSnapshot {
   canResume: () => boolean;
   canNext: () => boolean;
   canPrevious: () => boolean;
-  canTick: () => boolean;
   start: () => void;
   reset: () => void;
   pause: () => void;
   resume: () => void;
   next: () => void;
   previous: () => void;
-  tick: (seconds?: number) => void;
-  onComplete: (listener: TimerListener) => () => void;
-  onNew: (listener: TimerListener) => () => void;
-  onTick: (listener: TimerListener) => () => void;
-  onStart: (listener: TimerListener) => () => void;
-  onReset: (listener: TimerListener) => () => void;
-  onPause: (listener: TimerListener) => () => void;
-  onResume: (listener: TimerListener) => () => void;
+  reconcile: (now?: number) => TimerReconcileResult;
+  onRoutineComplete: (listener: TimerListener) => () => void;
+  onRoutineChange: (listener: TimerListener) => () => void;
+  onTimerStart: (listener: TimerListener) => () => void;
+  onTimerReset: (listener: TimerListener) => () => void;
+  onTimerPause: (listener: TimerListener) => () => void;
+  onTimerResume: (listener: TimerListener) => () => void;
   destroy: () => void;
 }
 
@@ -70,10 +75,9 @@ export interface TimerConfigStore {
 }
 
 export type TimerEventName =
-  | "onComplete"
-  | "onNew"
-  | "onTick"
-  | "onStart"
-  | "onReset"
-  | "onPause"
-  | "onResume";
+  | "onRoutineComplete"
+  | "onRoutineChange"
+  | "onTimerStart"
+  | "onTimerReset"
+  | "onTimerPause"
+  | "onTimerResume";
