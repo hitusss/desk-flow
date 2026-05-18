@@ -1,4 +1,5 @@
 import { Redirect, Slot, useSegments } from "expo-router";
+import * as Notifications from "expo-notifications";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useSyncExternalStore } from "react";
 
@@ -23,6 +24,14 @@ export default function RootLayout() {
   useEffect(() => {
     if (!isHydrated) return;
     SplashScreen.hide();
+  }, [isHydrated]);
+
+  useEffect(() => {
+    if (!isHydrated) {
+      return;
+    }
+
+    void Notifications.requestPermissionsAsync();
   }, [isHydrated]);
 
   if (!hasConfig && !onOnboarding) {
