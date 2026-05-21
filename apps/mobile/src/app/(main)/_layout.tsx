@@ -1,3 +1,4 @@
+import { PortalHost } from "@rn-primitives/portal";
 import { Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Home, Settings } from "lucide-react-native";
@@ -36,6 +37,7 @@ export default function Layout() {
         />
       </Tabs>
       <StatusBar />
+      <PortalHost />
     </>
   );
 }
