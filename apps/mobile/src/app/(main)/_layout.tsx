@@ -2,10 +2,29 @@ import { PortalHost } from "@rn-primitives/portal";
 import { Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Home, Settings } from "lucide-react-native";
+import { useEffect } from "react";
+import { AppState } from "react-native";
 
 import { theme } from "@repo/tailwind/theme-colors";
 
+import { useTimerStore } from "@/lib/timer";
+import { initializeTimerNotifications } from "@/lib/timer-notifications";
+
 export default function Layout() {
+  useEffect(() => {
+    void initializeTimerNotifications();
+
+    const subscription = AppState.addEventListener("change", (nextState) => {
+      if (nextState === "active") {
+        useTimerStore.getState().reconcile();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
   return (
     <>
       <Tabs

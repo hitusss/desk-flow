@@ -5,7 +5,7 @@ import {
   SkipBack,
   SkipForward,
 } from "lucide-react-native";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -18,12 +18,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import { useConfigStore } from "@/lib/config";
 import { useTimerStore } from "@/lib/timer";
 
 export default function Route() {
+  const config = useConfigStore((store) => store.config);
   const routinesCount = useConfigStore(
     (store) => store.config?.routines.length ?? 0,
   );
@@ -36,7 +46,9 @@ export default function Route() {
   const currentRoutineIndex = useTimerStore(
     (store) => store.currentRoutineIndex,
   );
+  const currentRoutineId = useTimerStore((store) => store.currentRoutineId);
   const totalSeconds = useTimerStore((store) => store.totalSeconds);
+  const isCompleted = status === "completed";
 
   const canStart = useTimerStore((store) => store.canStart());
   const canPause = useTimerStore((store) => store.canPause());
@@ -51,23 +63,22 @@ export default function Route() {
   const reset = useTimerStore((store) => store.reset);
   const previous = useTimerStore((store) => store.previous);
   const next = useTimerStore((store) => store.next);
+  const reconcile = useTimerStore((store) => store.reconcile);
+  const [isCompletionDialogOpen, setIsCompletionDialogOpen] = useState(false);
+
+  const nextRoutineLabel = useMemo(() => {
+    if (routinesCount === 0 || currentRoutineIndex === undefined) {
+      return "the next routine";
+    }
+
+    const nextIndex = (currentRoutineIndex + 1) % routinesCount;
+
+    return config?.routines[nextIndex]?.name ?? "the next routine";
+  }, [config, currentRoutineIndex, routinesCount]);
 
   useEffect(() => {
-    return useTimerStore.getState().onComplete(() => {
-      const timer = useTimerStore.getState();
-
-      if (!timer.canNext()) {
-        return;
-      }
-
-      timer.next();
-
-      const nextTimer = useTimerStore.getState();
-      if (nextTimer.canStart()) {
-        nextTimer.start();
-      }
-    });
-  }, []);
+    reconcile();
+  }, [reconcile]);
 
   useEffect(() => {
     if (status !== "running") {
@@ -75,17 +86,32 @@ export default function Route() {
     }
 
     const interval = setInterval(() => {
-      const timer = useTimerStore.getState();
-
-      if (timer.canTick()) {
-        timer.tick();
-      }
+      useTimerStore.getState().reconcile();
     }, 1000);
 
     return () => {
       clearInterval(interval);
     };
   }, [status]);
+
+  useEffect(() => {
+    if (isCompleted) {
+      setIsCompletionDialogOpen(true);
+      return;
+    }
+
+    setIsCompletionDialogOpen(false);
+  }, [isCompleted, currentRoutineId]);
+
+  const handleNextRoutine = () => {
+    setIsCompletionDialogOpen(false);
+    next();
+
+    const timer = useTimerStore.getState();
+    if (timer.canStart()) {
+      timer.start();
+    }
+  };
 
   const progressPercent = Math.round(progress * 100);
   const primaryAction =
@@ -105,10 +131,12 @@ export default function Route() {
           }
         : status === "completed"
           ? {
-              label: "Reset",
-              icon: RotateCcw,
-              onPress: reset,
-              disabled: !canReset,
+              label: "Next routine",
+              icon: SkipForward,
+              onPress: () => {
+                handleNextRoutine();
+              },
+              disabled: false,
             }
           : {
               label: "Start",
@@ -216,6 +244,31 @@ export default function Route() {
             </CardContent>
           </Card>
         </View>
+
+        <Dialog
+          open={isCompletionDialogOpen}
+          onOpenChange={setIsCompletionDialogOpen}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Routine complete</DialogTitle>
+              <DialogDescription className="text-foreground">
+                Time to switch to {nextRoutineLabel}.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="mt-4">
+              <DialogClose asChild>
+                <Button variant="neutral">
+                  <Text>Close</Text>
+                </Button>
+              </DialogClose>
+              <Button onPress={handleNextRoutine}>
+                <SkipForward size={18} />
+                <Text>Next routine</Text>
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </SafeAreaView>
     </PatternBackground>
   );
