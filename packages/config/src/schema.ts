@@ -23,9 +23,13 @@ export const RoutinesSchema = z.array(RoutineSchema).min(2).superRefine((routine
   });
 });
 
+export const ThemeSchema = z.enum(["system", "light", "dark"]);
+
 export const ConfigSchema = z.object({
+  theme: ThemeSchema.default("system"),
   routines: RoutinesSchema,
 });
 
 export type Routine = z.infer<typeof RoutineSchema>;
+export type Theme = z.infer<typeof ThemeSchema>;
 export type Config = z.infer<typeof ConfigSchema>;

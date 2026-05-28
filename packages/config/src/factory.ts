@@ -26,5 +26,6 @@ export function createDefaultRoutines(): Routine[] {
 export function createDefaultConfig(): Config {
   return {
     routines: createDefaultRoutines(),
+    theme: "system",
   };
 }
