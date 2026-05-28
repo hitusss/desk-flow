@@ -23,7 +23,7 @@ export default function config({
           {
             groups: [
               "type-import",
-              ["type-internal", "type-parent", "type-sibling", "type-index"],
+              ["type-internal", "type-parent", "type-sibling", "type-index", "type-repo"],
               { newlinesBetween: 1 },
               "value-builtin",
               "value-external",
@@ -41,6 +41,12 @@ export default function config({
               {
                 groupName: "repo",
                 elementNamePattern: ["^@repo/.*"],
+                modifiers: ["value"],
+              },
+              {
+                groupName: "type-repo",
+                elementNamePattern: ["^@repo/.*"],
+                modifiers: ["type"],
               },
             ],
             newlinesBetween: 0,
