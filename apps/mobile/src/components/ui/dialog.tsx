@@ -1,5 +1,4 @@
 import * as DialogPrimitive from "@rn-primitives/dialog";
-import * as React from "react";
 import { View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
