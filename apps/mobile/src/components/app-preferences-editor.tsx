@@ -27,8 +27,7 @@ export const AppPreferencesEditor = withForm({
       <Field>
         <FieldLabel>Theme</FieldLabel>
         <FieldDescription>
-          Switch between system, light, and dark appearance when theme support
-          lands.
+          Switch between system, light, and dark appearance.
         </FieldDescription>
         <form.Field name="theme">
           {(field) => {
