@@ -4,6 +4,7 @@ import { Redirect, Slot, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useSyncExternalStore } from "react";
 
+import { ThemeProvider } from "@/components/theme-provider";
 import { useConfigStore } from "@/lib/config";
 
 import "@/styles.css";
@@ -43,9 +44,9 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <ThemeProvider>
       <Slot />
       <PortalHost />
-    </>
+    </ThemeProvider>
   );
 }

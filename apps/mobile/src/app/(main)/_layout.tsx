@@ -2,7 +2,7 @@ import { Tabs } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Home, Settings } from "lucide-react-native";
 import { useEffect } from "react";
-import { AppState } from "react-native";
+import { AppState, useColorScheme } from "react-native";
 
 import { theme } from "@repo/tailwind/theme-colors";
 
@@ -10,6 +10,9 @@ import { useTimerStore } from "@/lib/timer";
 import { initializeTimerNotifications } from "@/lib/timer-notifications";
 
 export default function Layout() {
+  const colorScheme = useColorScheme() ?? "light";
+  const colors = theme[colorScheme === "dark" ? "dark" : "light"];
+
   useEffect(() => {
     void initializeTimerNotifications();
 
@@ -30,13 +33,13 @@ export default function Layout() {
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
-            backgroundColor: theme.light.background,
-            borderTopColor: theme.light.foreground,
+            backgroundColor: colors.background,
+            borderTopColor: colors.foreground,
             borderTopWidth: 1,
             paddingTop: 4,
           },
-          tabBarInactiveTintColor: theme.light.foreground,
-          tabBarActiveTintColor: theme.light.main,
+          tabBarInactiveTintColor: colors.foreground,
+          tabBarActiveTintColor: colors.main,
         }}
       >
         <Tabs.Screen
@@ -54,7 +57,7 @@ export default function Layout() {
           }}
         />
       </Tabs>
-      <StatusBar />
+      <StatusBar style="auto" />
     </>
   );
 }
