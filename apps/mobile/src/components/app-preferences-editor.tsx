@@ -20,7 +20,7 @@ const THEME_OPTIONS: { value: Theme; label: string }[] = [
 export const AppPreferencesEditor = withForm({
   ...configFormOpts,
   props: {
-    autoSubmit: false as boolean,
+    autoSubmit: false,
   },
   render: function Render({ form, autoSubmit }) {
     return (

@@ -69,7 +69,7 @@ export default function Route() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <AppPreferencesEditor form={form} />
+              <AppPreferencesEditor form={form} autoSubmit={false} />
             </CardContent>
           </Card>
 
