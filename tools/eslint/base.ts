@@ -23,7 +23,13 @@ export default function config({
           {
             groups: [
               "type-import",
-              ["type-internal", "type-parent", "type-sibling", "type-index", "type-repo"],
+              [
+                "type-internal",
+                "type-parent",
+                "type-sibling",
+                "type-index",
+                "type-repo",
+              ],
               { newlinesBetween: 1 },
               "value-builtin",
               "value-external",

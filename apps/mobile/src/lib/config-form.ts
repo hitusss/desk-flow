@@ -1,10 +1,11 @@
+import type { Config } from "@repo/config";
+
 import {
   createFormHook,
   createFormHookContexts,
   formOptions,
 } from "@tanstack/react-form";
 
-import type { Config } from "@repo/config";
 import { ConfigSchema } from "@repo/config";
 
 const EMPTY_CONFIG_FORM_VALUES: Config = {

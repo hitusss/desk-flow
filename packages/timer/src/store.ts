@@ -9,11 +9,11 @@ import type {
   TimerState,
   TimerStatus,
 } from "./types";
+import type { Config, Routine } from "@repo/config";
 
 import { create } from "zustand";
 
 import { ConfigSchema } from "@repo/config";
-import type { Config, Routine } from "@repo/config";
 
 type TimerStateUpdate = Partial<TimerSnapshot>;
 
@@ -201,7 +201,10 @@ function getReconciledRunningSnapshot(
     return state;
   }
 
-  const remainingSeconds = getRemainingSeconds(state.currentRoutineEndsAtMs, now);
+  const remainingSeconds = getRemainingSeconds(
+    state.currentRoutineEndsAtMs,
+    now,
+  );
 
   if (remainingSeconds === 0) {
     return {
@@ -566,7 +569,10 @@ export function createTimerStore(configStore: TimerConfigStore) {
 
     let nextSnapshot: TimerSnapshot;
     if (state.status === "running") {
-      const reconciledSnapshot = getReconciledRunningSnapshot(getSnapshot(state), Date.now());
+      const reconciledSnapshot = getReconciledRunningSnapshot(
+        getSnapshot(state),
+        Date.now(),
+      );
       const elapsedSeconds = Math.max(
         (reconciledSnapshot.totalSeconds ?? totalSeconds) -
           (reconciledSnapshot.remainingSeconds ?? totalSeconds),
@@ -600,7 +606,8 @@ export function createTimerStore(configStore: TimerConfigStore) {
             };
     } else if (state.status === "paused") {
       const elapsedSeconds = Math.max(
-        (state.totalSeconds ?? totalSeconds) - (state.remainingSeconds ?? totalSeconds),
+        (state.totalSeconds ?? totalSeconds) -
+          (state.remainingSeconds ?? totalSeconds),
         0,
       );
       const remainingSeconds = Math.max(totalSeconds - elapsedSeconds, 0);
@@ -623,7 +630,11 @@ export function createTimerStore(configStore: TimerConfigStore) {
         totalSeconds,
       };
     } else {
-      nextSnapshot = getIdleSnapshot(currentRoutine, currentRoutineIndex, totalSeconds);
+      nextSnapshot = getIdleSnapshot(
+        currentRoutine,
+        currentRoutineIndex,
+        totalSeconds,
+      );
     }
 
     if (isSameSnapshot(nextSnapshot, getSnapshot(state))) {

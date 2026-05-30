@@ -70,8 +70,8 @@ export interface TimerState extends TimerSnapshot {
 export type TimerListener = (event: TimerEventPayload) => void;
 
 export interface TimerConfigStore {
-  getState(): { config?: Config };
-  subscribe(listener: () => void): () => void;
+  getState: () => { config?: Config };
+  subscribe: (listener: () => void) => () => void;
 }
 
 export type TimerEventName =

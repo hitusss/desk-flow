@@ -6,22 +6,25 @@ export const RoutineSchema = z.object({
   duration: z.number().int().positive(),
 });
 
-export const RoutinesSchema = z.array(RoutineSchema).min(2).superRefine((routines, ctx) => {
-  const routineIds = new Set<string>();
+export const RoutinesSchema = z
+  .array(RoutineSchema)
+  .min(2)
+  .superRefine((routines, ctx) => {
+    const routineIds = new Set<string>();
 
-  routines.forEach((routine, index) => {
-    if (!routineIds.has(routine.id)) {
-      routineIds.add(routine.id);
-      return;
-    }
+    routines.forEach((routine, index) => {
+      if (!routineIds.has(routine.id)) {
+        routineIds.add(routine.id);
+        return;
+      }
 
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Routine ids must be unique.",
-      path: [index, "id"],
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Routine ids must be unique.",
+        path: [index, "id"],
+      });
     });
   });
-});
 
 export const ThemeSchema = z.enum(["system", "light", "dark"]);
 

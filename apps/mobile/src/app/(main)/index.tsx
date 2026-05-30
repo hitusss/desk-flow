@@ -96,10 +96,12 @@ export default function Route() {
 
   useEffect(() => {
     if (isCompleted) {
+      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
       setIsCompletionDialogOpen(true);
       return;
     }
 
+    // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
     setIsCompletionDialogOpen(false);
   }, [isCompleted, currentRoutineId]);
 

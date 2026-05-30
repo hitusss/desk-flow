@@ -61,18 +61,17 @@ async function syncCompletionNotification() {
 
   await cancelCompletionNotification();
 
-  completionNotificationId =
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Routine complete",
-        body: `Time to switch to ${nextRoutineLabel}.`,
-      },
-      trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.DATE,
-        date: new Date(timer.currentRoutineEndsAtMs),
-        channelId: CHANNEL_ID,
-      },
-    });
+  completionNotificationId = await Notifications.scheduleNotificationAsync({
+    content: {
+      title: "Routine complete",
+      body: `Time to switch to ${nextRoutineLabel}.`,
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.DATE,
+      date: new Date(timer.currentRoutineEndsAtMs),
+      channelId: CHANNEL_ID,
+    },
+  });
   lastScheduledKey = scheduledKey;
 }
 

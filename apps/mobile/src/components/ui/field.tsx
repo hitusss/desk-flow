@@ -138,6 +138,7 @@ function FieldError({
     return (
       <View className="ml-4 flex flex-col gap-1">
         {uniqueErrors.map((error, index) =>
+          // eslint-disable-next-line react/no-array-index-key
           error?.message ? <Text key={index}>{error.message}</Text> : null,
         )}
       </View>
