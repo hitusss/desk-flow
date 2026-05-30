@@ -1,5 +1,6 @@
-import { Redirect, Slot, useSegments } from "expo-router";
+import { PortalHost } from "@rn-primitives/portal";
 import * as Notifications from "expo-notifications";
+import { Redirect, Slot, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useSyncExternalStore } from "react";
 
@@ -41,5 +42,10 @@ export default function RootLayout() {
     return <Redirect href="/" />;
   }
 
-  return <Slot />;
+  return (
+    <>
+      <Slot />
+      <PortalHost />
+    </>
+  );
 }
