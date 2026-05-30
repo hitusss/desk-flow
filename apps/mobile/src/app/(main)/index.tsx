@@ -1,10 +1,3 @@
-import {
-  Pause,
-  Play,
-  RotateCcw,
-  SkipBack,
-  SkipForward,
-} from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -27,6 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Icon } from "@/components/ui/icon";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import { useConfigStore } from "@/lib/config";
@@ -120,21 +114,21 @@ export default function Route() {
     status === "running"
       ? {
           label: "Pause",
-          icon: Pause,
+          icon: "Pause" as const,
           onPress: pause,
           disabled: !canPause,
         }
       : status === "paused"
         ? {
             label: "Resume",
-            icon: Play,
+            icon: "Play" as const,
             onPress: resume,
             disabled: !canResume,
           }
         : status === "completed"
           ? {
               label: "Next routine",
-              icon: SkipForward,
+              icon: "SkipForward" as const,
               onPress: () => {
                 handleNextRoutine();
               },
@@ -142,11 +136,10 @@ export default function Route() {
             }
           : {
               label: "Start",
-              icon: Play,
+              icon: "Play" as const,
               onPress: start,
               disabled: !canStart,
             };
-  const PrimaryActionIcon = primaryAction.icon;
 
   return (
     <PatternBackground>
@@ -205,7 +198,7 @@ export default function Route() {
                     accessibilityLabel="Previous routine"
                     accessibilityHint="Moves to the previous routine"
                   >
-                    <SkipBack size={18} />
+                    <Icon name="SkipBack" size={18} />
                   </Button>
 
                   <Button
@@ -216,7 +209,7 @@ export default function Route() {
                     accessibilityLabel={primaryAction.label}
                     accessibilityHint={`${primaryAction.label}s the current timer`}
                   >
-                    <PrimaryActionIcon size={18} />
+                    <Icon name={primaryAction.icon} size={18} />
                     <Text>{primaryAction.label}</Text>
                   </Button>
 
@@ -228,7 +221,7 @@ export default function Route() {
                     accessibilityLabel="Next routine"
                     accessibilityHint="Moves to the next routine"
                   >
-                    <SkipForward size={18} />
+                    <Icon name="SkipForward" size={18} />
                   </Button>
                 </View>
 
@@ -239,7 +232,7 @@ export default function Route() {
                   accessibilityLabel="Reset timer"
                   accessibilityHint="Resets the timer back to the start of the current routine"
                 >
-                  <RotateCcw size={16} />
+                  <Icon name="RotateCcw" size={16} />
                   <Text>Reset timer</Text>
                 </Button>
               </View>
@@ -265,7 +258,7 @@ export default function Route() {
                 </Button>
               </DialogClose>
               <Button onPress={handleNextRoutine}>
-                <SkipForward size={18} />
+                <Icon name="SkipForward" size={18} />
                 <Text>Next routine</Text>
               </Button>
             </DialogFooter>

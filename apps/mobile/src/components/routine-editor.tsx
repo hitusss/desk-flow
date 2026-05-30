@@ -1,4 +1,3 @@
-import { ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react-native";
 import { View } from "react-native";
 
 import { createRoutine } from "@repo/config";
@@ -10,6 +9,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
+import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
@@ -43,7 +43,7 @@ export const RoutineEditor = withForm({
                         : "Moves routine earlier in the list"
                     }
                   >
-                    <ChevronUp />
+                    <Icon name="ChevronUp" />
                   </Button>
                   <Button
                     size="icon"
@@ -60,7 +60,7 @@ export const RoutineEditor = withForm({
                         : "Moves routine later in the list"
                     }
                   >
-                    <ChevronDown />
+                    <Icon name="ChevronDown" />
                   </Button>
                 </View>
 
@@ -138,7 +138,7 @@ export const RoutineEditor = withForm({
                         : "Removes this routine"
                     }
                   >
-                    <Trash2 size={16} />
+                    <Icon name="Trash2" size={16} />
                     <Text>Remove</Text>
                   </Button>
                 </FieldGroup>
@@ -160,7 +160,7 @@ export const RoutineEditor = withForm({
               accessibilityLabel="Add routine"
               accessibilityHint="Adds a new routine entry"
             >
-              <Plus size={16} />
+              <Icon name="Plus" size={16} />
               <Text>Add routine</Text>
             </Button>
           </View>

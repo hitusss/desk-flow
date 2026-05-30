@@ -1,7 +1,6 @@
 import type { Theme } from "@repo/config";
 
 import Constants from "expo-constants";
-import { TriangleAlert } from "lucide-react-native";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -18,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useConfigStore } from "@/lib/config";
 import { configFormOpts, useAppForm } from "@/lib/config-form";
@@ -66,7 +66,7 @@ export default function Route() {
                   <View className="gap-3">
                     {state.isDirty ? (
                       <View className="rounded-base border-border bg-secondary-background flex-row gap-2 border-2 p-3">
-                        <TriangleAlert size={18} />
+                        <Icon name="TriangleAlert" size={18} />
                         <Text className="flex-1 text-sm leading-5">
                           You have unsaved routine changes.
                         </Text>

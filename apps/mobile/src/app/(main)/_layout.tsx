@@ -1,8 +1,8 @@
 import { Tabs } from "expo-router";
-import { Home, Settings } from "lucide-react-native";
 import { useEffect } from "react";
 import { AppState } from "react-native";
 
+import { Icon } from "@/components/ui/icon";
 import { useTimerStore } from "@/lib/timer";
 import { initializeTimerNotifications } from "@/lib/timer-notifications";
 import { useColors } from "@/lib/use-colors";
@@ -42,14 +42,18 @@ export default function Layout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => <Home size={28} color={color} />,
+          tabBarIcon: ({ color }) => (
+            <Icon name="House" size={28} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           title: "Settings",
-          tabBarIcon: ({ color }) => <Settings size={28} color={color} />,
+          tabBarIcon: ({ color }) => (
+            <Icon name="Settings" size={28} color={color} />
+          ),
         }}
       />
     </Tabs>
