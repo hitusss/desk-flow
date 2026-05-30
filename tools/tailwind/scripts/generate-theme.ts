@@ -3,7 +3,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
-import { formatHex } from "culori";
+import { formatHex, formatHex8, parse } from "culori";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const packageDirectory = path.resolve(scriptDirectory, "..");
@@ -72,13 +72,22 @@ function parseColors(block: string): ThemeColors {
       continue;
     }
 
-    const hex = formatHex(rawValue.trim());
+    const parsed = parse(rawValue.trim());
 
-    if (!hex) {
+    if (!parsed) {
       continue;
     }
 
-    colors[token] = hex;
+    const color =
+      parsed.alpha !== undefined && parsed.alpha < 1
+        ? formatHex8(parsed)
+        : formatHex(parsed);
+
+    if (!color) {
+      continue;
+    }
+
+    colors[token] = color;
   }
 
   return colors;
@@ -96,7 +105,9 @@ function serializeColors(mode: ThemeMode, colors: ThemeColors): string {
 async function generateTheme(): Promise<void> {
   const css = await readFile(themeCssPath, "utf8");
   const lightColors = parseColors(extractBlock(css, ":root"));
-  const darkColors = parseColors(extractBlock(css, ".dark"));
+  const darkColorsParsed = parseColors(extractBlock(css, ".dark"));
+  // Fall back to light values for any token missing in the dark block
+  const darkColors = { ...lightColors, ...darkColorsParsed };
   const contents = `${generatedHeader}\nexport const theme = {\n${serializeColors("light", lightColors)}\n${serializeColors("dark", darkColors)}\n} as const;\n`;
 
   await writeFile(outputPath, contents, "utf8");
