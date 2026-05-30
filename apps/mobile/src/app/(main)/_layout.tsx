@@ -1,17 +1,14 @@
 import { Tabs } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import { Home, Settings } from "lucide-react-native";
 import { useEffect } from "react";
-import { AppState, useColorScheme } from "react-native";
-
-import { theme } from "@repo/tailwind/theme-colors";
+import { AppState } from "react-native";
 
 import { useTimerStore } from "@/lib/timer";
 import { initializeTimerNotifications } from "@/lib/timer-notifications";
+import { useColors } from "@/lib/use-colors";
 
 export default function Layout() {
-  const colorScheme = useColorScheme() ?? "light";
-  const colors = theme[colorScheme === "dark" ? "dark" : "light"];
+  const colors = useColors();
 
   useEffect(() => {
     void initializeTimerNotifications();
@@ -28,36 +25,33 @@ export default function Layout() {
   }, []);
 
   return (
-    <>
-      <Tabs
-        screenOptions={{
-          headerShown: false,
-          tabBarStyle: {
-            backgroundColor: colors.background,
-            borderTopColor: colors.foreground,
-            borderTopWidth: 1,
-            paddingTop: 4,
-          },
-          tabBarInactiveTintColor: colors.foreground,
-          tabBarActiveTintColor: colors.main,
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: colors.background,
+          borderTopColor: colors.foreground,
+          borderTopWidth: 1,
+          paddingTop: 4,
+        },
+        tabBarInactiveTintColor: colors.foreground,
+        tabBarActiveTintColor: colors.main,
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Home",
+          tabBarIcon: ({ color }) => <Home size={28} color={color} />,
         }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: "Home",
-            tabBarIcon: ({ color }) => <Home size={28} color={color} />,
-          }}
-        />
-        <Tabs.Screen
-          name="settings"
-          options={{
-            title: "Settings",
-            tabBarIcon: ({ color }) => <Settings size={28} color={color} />,
-          }}
-        />
-      </Tabs>
-      <StatusBar style="auto" />
-    </>
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          tabBarIcon: ({ color }) => <Settings size={28} color={color} />,
+        }}
+      />
+    </Tabs>
   );
 }

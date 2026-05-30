@@ -1,13 +1,6 @@
-import {
-  Platform,
-  StyleSheet,
-  useColorScheme,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { Platform, StyleSheet, useWindowDimensions, View } from "react-native";
 
-import { theme } from "@repo/tailwind/theme-colors";
-
+import { useColors } from "@/lib/use-colors";
 import { cn } from "@/lib/utils";
 
 export function PatternBackground({
@@ -20,7 +13,7 @@ export function PatternBackground({
   size?: number;
 }) {
   const { height, width } = useWindowDimensions();
-  const colorScheme = useColorScheme();
+  const colors = useColors();
 
   if (Platform.OS === "web") {
     return (
@@ -32,8 +25,7 @@ export function PatternBackground({
 
   const columns = Math.floor(width / size);
   const rows = Math.floor(height / size);
-  const color =
-    theme[colorScheme === "dark" ? "dark" : "light"]["muted-foreground"];
+  const color = colors["muted-foreground"];
 
   return (
     <View className={cn("bg-background flex-1 overflow-hidden", className)}>

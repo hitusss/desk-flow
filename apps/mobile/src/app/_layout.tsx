@@ -2,6 +2,7 @@ import { PortalHost } from "@rn-primitives/portal";
 import * as Notifications from "expo-notifications";
 import { Redirect, Slot, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
 import { useEffect, useSyncExternalStore } from "react";
 
 import { ThemeProvider } from "@/components/theme-provider";
@@ -47,6 +48,7 @@ export default function RootLayout() {
     <ThemeProvider>
       <Slot />
       <PortalHost />
+      <StatusBar style="auto" />
     </ThemeProvider>
   );
 }
