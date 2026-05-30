@@ -71,7 +71,7 @@ function SelectContent({
         <SelectPrimitive.Overlay
           style={Platform.select({ native: StyleSheet.absoluteFill })}
         >
-          <TextClassContext value="text-popover-foreground">
+          <TextClassContext value="text-main-foreground">
             <Animated.View className="z-50" entering={FadeIn} exiting={FadeOut}>
               <SelectPrimitive.Content
                 className={cn(

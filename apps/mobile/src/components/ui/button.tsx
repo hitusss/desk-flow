@@ -15,7 +15,7 @@ const buttonVariants = cva(
           "bg-main border-2 border-border shadow-shadow active:shadow-none active:translate-x-boxShadowX active:translate-y-boxShadowY",
         noShadow: "bg-main border-2 border-border",
         neutral:
-          "bg-secondary border-2 border-border shadow-shadow active:shadow-none active:translate-x-boxShadowX active:translate-y-boxShadowY",
+          "bg-secondary-background border-2 border-border shadow-shadow active:shadow-none active:translate-x-boxShadowX active:translate-y-boxShadowY",
         reverse: `"bg-main border-2 border-border active:shadow-shadow active:translate-x-reverseBoxShadowX
         active:translate-y-reverseBoxShadowY"`,
       },

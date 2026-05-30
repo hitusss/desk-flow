@@ -127,7 +127,7 @@ export default function Route() {
                 <View className="flex-1 gap-1">
                   <Text className="font-medium">App version</Text>
                 </View>
-                <View className="rounded-base border-border bg-secondary border-2 px-2 py-1">
+                <View className="rounded-base border-border bg-secondary-background border-2 px-2 py-1">
                   <Text className="text-sm">
                     {Constants.expoConfig?.version ?? "Local build"}
                   </Text>
