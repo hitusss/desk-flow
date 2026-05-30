@@ -1,8 +1,11 @@
+import type { Theme } from "@repo/config";
+
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { createDefaultRoutines } from "@repo/config";
 
+import { AppPreferencesEditor } from "@/components/app-preferences-editor";
 import { PatternBackground } from "@/components/pattern-background";
 import { RoutineEditor } from "@/components/routine-editor";
 import { Button } from "@/components/ui/button";
@@ -25,6 +28,7 @@ export default function Route() {
   const form = useAppForm({
     ...configFormOpts,
     defaultValues: {
+      theme: "system" as Theme,
       routines: DEFAULT_ROUTINES,
     },
     onSubmit: async ({ value }) => {
@@ -54,6 +58,18 @@ export default function Route() {
             </CardHeader>
             <CardContent>
               <RoutineEditor form={form} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>App preferences</CardTitle>
+              <CardDescription>
+                General app-level options and preferences.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AppPreferencesEditor form={form} />
             </CardContent>
           </Card>
 

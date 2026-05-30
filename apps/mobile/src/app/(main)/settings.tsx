@@ -1,3 +1,5 @@
+import type { Theme } from "@repo/config";
+
 import Constants from "expo-constants";
 import { TriangleAlert } from "lucide-react-native";
 import { ScrollView, View } from "react-native";
@@ -5,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { createDefaultRoutines } from "@repo/config";
 
+import { AppPreferencesEditor } from "@/components/app-preferences-editor";
 import { PatternBackground } from "@/components/pattern-background";
 import { RoutineEditor } from "@/components/routine-editor";
 import { Button } from "@/components/ui/button";
@@ -24,6 +27,7 @@ export default function Route() {
   const setConfig = useConfigStore((store) => store.set);
 
   const defaultValues = {
+    theme: config?.theme ?? ("system" as Theme),
     routines: config?.routines ?? createDefaultRoutines(),
   };
 
@@ -94,6 +98,18 @@ export default function Route() {
                   </View>
                 )}
               </form.Subscribe>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>App preferences</CardTitle>
+              <CardDescription>
+                General app-level options and preferences.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="gap-4">
+              <AppPreferencesEditor form={form} autoSubmit />
             </CardContent>
           </Card>
 

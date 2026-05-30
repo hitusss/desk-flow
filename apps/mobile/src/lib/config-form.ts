@@ -9,6 +9,7 @@ import { ConfigSchema } from "@repo/config";
 
 const EMPTY_CONFIG_FORM_VALUES: Config = {
   routines: [],
+  theme: "system",
 };
 
 export const { fieldContext, formContext, useFieldContext } =
