@@ -29,7 +29,7 @@ export const RoutinesSchema = z
 export const ThemeSchema = z.enum(["system", "light", "dark"]);
 
 export const ConfigSchema = z.object({
-  theme: ThemeSchema.default("system"),
+  theme: ThemeSchema,
   routines: RoutinesSchema,
 });
 
