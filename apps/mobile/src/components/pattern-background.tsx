@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, useWindowDimensions, View } from "react-native";
+import { StyleSheet, useWindowDimensions, View } from "react-native";
 
 import { useColors } from "@/lib/use-colors";
 import { cn } from "@/lib/utils";
@@ -14,14 +14,6 @@ export function PatternBackground({
 }) {
   const { height, width } = useWindowDimensions();
   const colors = useColors();
-
-  if (Platform.OS === "web") {
-    return (
-      <View className={cn("bg-background bg-pattern flex-1", className)}>
-        <View className={cn("flex-1", contentClassName)}>{children}</View>
-      </View>
-    );
-  }
 
   const columns = Math.floor(width / size);
   const rows = Math.floor(height / size);
